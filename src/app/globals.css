@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap");
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(184, 134, 11, 0.12), transparent),
+    #14110d;
+  color: #ece3d0;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-lg border border-gold/30 bg-black/30 shadow-lg;
+  }
+  .panel-title {
+    @apply font-display text-gold tracking-wide text-sm uppercase;
+  }
+  .stat-box {
+    @apply flex flex-col items-center justify-center rounded-md border border-gold/30 bg-black/40 p-2 text-center;
+  }
+  .inp {
+    @apply w-full rounded border border-gold/25 bg-black/40 px-2 py-1 text-sm text-parchment outline-none focus:border-gold;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-1.5 text-sm font-medium text-gold transition hover:bg-gold/20 disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-blood px-4 py-2 text-sm font-semibold text-parchment transition hover:brightness-110 disabled:opacity-50;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-gold/30 bg-black/30 px-2 py-0.5 text-xs;
+  }
+  .label {
+    @apply text-[11px] uppercase tracking-wide text-gold/70;
+  }
+}
+
+/* Hide number input spinners for a cleaner sheet look */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
