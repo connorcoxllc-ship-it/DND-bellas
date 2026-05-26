@@ -190,7 +190,7 @@ export default function DashboardClient({
           <div className="mb-4 flex items-center gap-3">
             <span className="label">Accent color</span>
             <input type="color" value={prefs.accent} onChange={(e) => setPrefs((p) => ({ ...p, accent: e.target.value }))} className="h-8 w-12 cursor-pointer rounded border border-gold/30 bg-transparent" />
-            <button className="btn" onClick={() => setPrefs((p) => ({ ...p, accent: "#b8860b" }))}>Reset</button>
+            <button className="btn" onClick={() => setPrefs((p) => ({ ...p, accent: "#8b5cf6" }))}>Reset</button>
           </div>
           <div className="label mb-1">Sections (reorder &amp; show/hide)</div>
           <ul className="space-y-1">
