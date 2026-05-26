@@ -72,7 +72,7 @@ export interface UserPrefs {
 
 export function defaultPrefs(): UserPrefs {
   return {
-    accent: "#b8860b",
+    accent: "#8b5cf6",
     order: ["myCharacters", "party", "campaigns", "widgets"],
     hidden: [],
     widgets: [],

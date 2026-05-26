@@ -2,43 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 :root {
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
+  background-color: #08080b;
+  color: #ECECF1;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Animated ambient gradient blobs behind everything. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(184, 134, 11, 0.12), transparent),
-    #14110d;
-  color: #ece3d0;
+    radial-gradient(38% 38% at 18% 18%, rgba(139, 92, 246, 0.22), transparent 70%),
+    radial-gradient(36% 36% at 82% 28%, rgba(99, 102, 241, 0.18), transparent 70%),
+    radial-gradient(50% 50% at 50% 92%, rgba(139, 92, 246, 0.12), transparent 70%);
+  filter: blur(46px);
+  animation: floatBlob 18s ease-in-out infinite alternate;
+}
+@keyframes floatBlob {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-4%) scale(1.08); }
+}
+
+@layer base {
+  h1, h2, h3 { font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif; }
 }
 
 @layer components {
   .panel {
-    @apply rounded-lg border border-gold/30 bg-black/30 shadow-lg;
+    @apply rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm;
   }
   .panel-title {
-    @apply font-display text-gold tracking-wide text-sm uppercase;
+    @apply font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-parchment/55;
   }
   .stat-box {
-    @apply flex flex-col items-center justify-center rounded-md border border-gold/30 bg-black/40 p-2 text-center;
+    @apply flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] p-2 text-center transition;
   }
   .inp {
-    @apply w-full rounded border border-gold/25 bg-black/40 px-2 py-1 text-sm text-parchment outline-none focus:border-gold;
+    @apply w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-sm text-parchment outline-none transition placeholder:text-parchment/30 focus:border-gold/70 focus:bg-white/[0.06] focus:ring-2 focus:ring-gold/20;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-1.5 text-sm font-medium text-gold transition hover:bg-gold/20 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-4 py-1.5 text-sm font-medium text-parchment transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10 disabled:opacity-50 disabled:hover:translate-y-0;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-blood px-4 py-2 text-sm font-semibold text-parchment transition hover:brightness-110 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold to-blood px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgba(99,102,241,0.7)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-50 disabled:hover:translate-y-0;
   }
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full border border-gold/30 bg-black/30 px-2 py-0.5 text-xs;
+    @apply inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-xs text-parchment/80;
   }
   .label {
-    @apply text-[11px] uppercase tracking-wide text-gold/70;
+    @apply text-[11px] uppercase tracking-[0.12em] text-parchment/45;
   }
   .hex {
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
@@ -47,14 +75,17 @@ body {
     clip-path: polygon(50% 0%, 100% 12%, 100% 60%, 50% 100%, 0% 60%, 0% 12%);
   }
   .tab {
-    @apply whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm font-medium text-parchment/60 transition hover:text-parchment;
+    @apply whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm font-medium text-parchment/55 transition hover:text-parchment;
   }
   .tab-active {
-    @apply border-gold text-gold;
+    @apply border-gold text-parchment;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-gold via-fuchsia-400 to-blood bg-clip-text text-transparent;
   }
 }
 
-/* Hide number input spinners for a cleaner sheet look */
+/* Hide number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -62,4 +93,9 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+  * { scroll-behavior: auto !important; }
 }
