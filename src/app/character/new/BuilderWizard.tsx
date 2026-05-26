@@ -26,6 +26,17 @@ import {
   POINT_BUY_BUDGET,
 } from "@/lib/dnd/data";
 import { abilityModifier, formatMod, recommendedSpellSlots, earnedClassFeatures } from "@/lib/dnd/compute";
+import { RaceInfo, ClassInfo, raceIndex, classIndex } from "./SrdInfo";
+
+// Brief, generic function summaries (not rulebook text) of what each ability does.
+const ABILITY_HINTS: Record<AbilityKey, string> = {
+  str: "Physical power — melee attacks, Athletics, carrying capacity.",
+  dex: "Agility — Armor Class, finesse & ranged attacks, Stealth, initiative.",
+  con: "Health & stamina — hit points and concentration saves.",
+  int: "Reasoning & memory — Arcana, Investigation, wizard spells.",
+  wis: "Awareness & insight — Perception, many saves, cleric/druid spells.",
+  cha: "Force of personality — social skills, many spellcasters' magic.",
+};
 
 type Method = "standard" | "pointbuy" | "manual" | "roll";
 const STEPS = ["Class", "Species", "Background", "Abilities", "Equipment", "Details", "Review"];
@@ -202,6 +213,7 @@ export default function BuilderWizard({ campaigns }: { campaigns: { id: string; 
                 {cls.spellcastingAbility ? ` · Spellcasting: ${ABILITIES.find((a) => a.key === cls.spellcastingAbility)?.label}` : ""}
               </div>
             )}
+            <ClassInfo index={classIndex(classOf)} />
           </Step>
         )}
 
@@ -237,6 +249,7 @@ export default function BuilderWizard({ campaigns }: { campaigns: { id: string; 
                 )}
               </div>
             )}
+            <RaceInfo index={raceIndex(raceName)} />
           </Step>
         )}
 
@@ -293,6 +306,7 @@ export default function BuilderWizard({ campaigns }: { campaigns: { id: string; 
                     {racialBonus[a.key] ? `+${racialBonus[a.key]} race → ` : ""}
                     <span className="text-gold">{totals[a.key]} ({formatMod(abilityModifier(totals[a.key]))})</span>
                   </div>
+                  <div className="mt-1 text-[10px] leading-tight text-parchment/40">{ABILITY_HINTS[a.key]}</div>
                 </div>
               ))}
             </div>
