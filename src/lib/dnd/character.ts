@@ -97,10 +97,20 @@ export interface CharacterData {
   backstory: string;
   notes: string;
 
-  // Appearance
+  // Appearance & card styling
   appearance: string;
   avatarColor: string;
+  avatarImageUrl: string;
+  cardStats: string[]; // which stats show on dashboard cards: hp, ac, pp, speed, init
 }
+
+export const CARD_STAT_OPTIONS: { key: string; label: string }[] = [
+  { key: "hp", label: "HP" },
+  { key: "ac", label: "AC" },
+  { key: "pp", label: "Passive Perception" },
+  { key: "speed", label: "Speed" },
+  { key: "init", label: "Initiative" },
+];
 
 export function emptySpellSlots(): Record<number, SpellSlotLevel> {
   const s: Record<number, SpellSlotLevel> = {};
@@ -154,6 +164,8 @@ export function defaultCharacter(name = "New Adventurer"): CharacterData {
     notes: "",
     appearance: "",
     avatarColor: "#7b2d26",
+    avatarImageUrl: "",
+    cardStats: ["hp", "ac"],
   };
 }
 

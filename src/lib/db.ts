@@ -88,6 +88,8 @@ async function migrate(): Promise<void> {
       updated_at timestamptz NOT NULL DEFAULT now()
     );
   `;
+  await sql`ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS data jsonb NOT NULL DEFAULT '{}'::jsonb;`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS prefs jsonb NOT NULL DEFAULT '{}'::jsonb;`;
   await sql`CREATE INDEX IF NOT EXISTS idx_characters_owner ON characters(owner_id);`;
   await sql`CREATE INDEX IF NOT EXISTS idx_characters_campaign ON characters(campaign_id);`;
   await sql`CREATE INDEX IF NOT EXISTS idx_members_user ON campaign_members(user_id);`;

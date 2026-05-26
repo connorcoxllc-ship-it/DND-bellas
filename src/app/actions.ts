@@ -13,10 +13,14 @@ import {
   createCampaign,
   joinCampaign,
   createCharacter,
+  createCharacterWithData,
   saveCharacter,
   deleteCharacter,
+  updateCampaignData,
+  saveUserPrefs,
 } from "@/lib/queries";
 import type { CharacterData } from "@/lib/dnd/character";
+import type { CampaignData, UserPrefs } from "@/lib/dnd/dashboard";
 
 export type ActionState = { error?: string; ok?: boolean } | null;
 
@@ -72,6 +76,13 @@ export async function createCharacterAction(formData: FormData) {
   redirect(`/character/${id}`);
 }
 
+export async function createBuiltCharacterAction(data: CharacterData, campaignId: string | null) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "Not signed in." };
+  const id = await createCharacterWithData(user.id, data, campaignId);
+  return { ok: true as const, id };
+}
+
 export async function saveCharacterAction(
   characterId: string,
   data: CharacterData,
@@ -89,4 +100,20 @@ export async function deleteCharacterAction(characterId: string) {
   if (!user) redirect("/login");
   await deleteCharacter(user.id, characterId);
   redirect("/dashboard");
+}
+
+export async function saveCampaignDataAction(campaignId: string, data: CampaignData) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "Not signed in." };
+  const res = await updateCampaignData(user.id, campaignId, data);
+  if (res.ok) revalidatePath(`/campaign/${campaignId}`);
+  return res;
+}
+
+export async function saveUserPrefsAction(prefs: UserPrefs) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false };
+  await saveUserPrefs(user.id, prefs);
+  revalidatePath("/dashboard");
+  return { ok: true };
 }
