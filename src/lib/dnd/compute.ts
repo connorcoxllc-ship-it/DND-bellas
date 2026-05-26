@@ -3,10 +3,14 @@ import {
   AbilityKey,
   SKILLS,
   CLASSES,
+  CLASS_PROFICIENCIES,
+  ClassProficiencies,
   proficiencyBonusForLevel,
   levelForXp,
   xpToNextLevel,
   FULL_CASTER_SLOTS,
+  HALF_CASTER_SLOTS,
+  PACT_MAGIC,
   ASI_LEVELS,
 } from "./data";
 import type { CharacterData } from "./character";
@@ -175,4 +179,82 @@ export function recommendedFullCasterSlots(c: CharacterData): number[] {
     .filter((cl) => CLASSES[cl.name]?.caster === "full")
     .reduce((s, cl) => s + cl.level, 0);
   return FULL_CASTER_SLOTS[fullCasterLevels] || [0, 0, 0, 0, 0, 0, 0, 0, 0];
+}
+
+// Recommended spell slots tying in each class: combines full/half/third casters
+// via the 5e multiclass rule, and returns Warlock pact magic separately.
+export function recommendedSpellSlots(c: CharacterData): {
+  slots: number[];
+  pact: { slots: number; level: number } | null;
+} {
+  let effective = 0;
+  let pactLevels = 0;
+  for (const cl of c.classes) {
+    const info = CLASSES[cl.name];
+    if (!info) continue;
+    if (info.caster === "full") effective += cl.level;
+    else if (info.caster === "half") effective += Math.floor(cl.level / 2);
+    else if (info.caster === "third") effective += Math.floor(cl.level / 3);
+    else if (info.caster === "pact") pactLevels += cl.level;
+  }
+  // Single half-caster characters use the dedicated half-caster table so a
+  // level-2 Paladin/Ranger correctly shows a 1st-level slot.
+  const onlyHalf =
+    c.classes.length === 1 && CLASSES[c.classes[0].name]?.caster === "half";
+  let slots = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  if (onlyHalf) {
+    const half = HALF_CASTER_SLOTS[Math.min(20, c.classes[0].level)] || [];
+    slots = [...half, 0, 0, 0, 0].slice(0, 9);
+  } else if (effective > 0) {
+    slots = FULL_CASTER_SLOTS[Math.min(20, effective)] || slots;
+  }
+  const pact = pactLevels > 0 ? PACT_MAGIC[Math.min(20, pactLevels)] : null;
+  return { slots, pact };
+}
+
+export interface ClassDefaults {
+  hitDice: string;
+  savingThrowProficiencies: AbilityKey[];
+  spellcastingAbility: AbilityKey | null;
+  proficiencies: ClassProficiencies | null;
+}
+
+// What a class+level "ties in" — used by the Apply Class Defaults button.
+export function classDefaults(c: CharacterData): ClassDefaults {
+  const primary = c.classes[0];
+  const info = primary ? CLASSES[primary.name] : undefined;
+  const hitDiceParts = c.classes
+    .filter((cl) => CLASSES[cl.name])
+    .map((cl) => `${cl.level}d${CLASSES[cl.name].hitDie}`);
+  // Saving throws come from the first class (5e: only your starting class
+  // grants saving-throw proficiencies).
+  const saves = info ? [...info.savingThrows] : [];
+  const castingClass = c.classes.find((cl) => CLASSES[cl.name]?.spellcastingAbility);
+  const spellAbility = castingClass
+    ? CLASSES[castingClass.name].spellcastingAbility || null
+    : null;
+  return {
+    hitDice: hitDiceParts.join(" + ") || "1d8",
+    savingThrowProficiencies: saves,
+    spellcastingAbility: spellAbility,
+    proficiencies: info ? CLASS_PROFICIENCIES[info.name] || null : null,
+  };
+}
+
+// All class features the character has earned, per class, up to their current
+// level — auto-populated in the Features & Traits tab.
+export function earnedClassFeatures(
+  c: CharacterData
+): { className: string; level: number; features: { level: number; name: string }[] }[] {
+  return c.classes
+    .map((cl) => {
+      const info = CLASSES[cl.name];
+      if (!info) return null;
+      const features: { level: number; name: string }[] = [];
+      for (let lvl = 1; lvl <= cl.level; lvl++) {
+        for (const f of info.features[lvl] || []) features.push({ level: lvl, name: f });
+      }
+      return { className: cl.name, level: cl.level, features };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
 }

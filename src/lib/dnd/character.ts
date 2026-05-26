@@ -85,6 +85,10 @@ export interface CharacterData {
   // Story & inventory
   features: FeatureEntry[];
   proficienciesAndLanguages: string;
+  armorProficiencies: string;
+  weaponProficiencies: string;
+  toolProficiencies: string;
+  languages: string;
   equipment: ItemEntry[];
   personality: string;
   ideals: string;
@@ -137,6 +141,10 @@ export function defaultCharacter(name = "New Adventurer"): CharacterData {
     spells: [],
     features: [],
     proficienciesAndLanguages: "",
+    armorProficiencies: "",
+    weaponProficiencies: "",
+    toolProficiencies: "",
+    languages: "",
     equipment: [],
     personality: "",
     ideals: "",
