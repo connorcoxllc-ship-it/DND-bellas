@@ -40,6 +40,18 @@ body {
   .label {
     @apply text-[11px] uppercase tracking-wide text-gold/70;
   }
+  .hex {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .shield {
+    clip-path: polygon(50% 0%, 100% 12%, 100% 60%, 50% 100%, 0% 60%, 0% 12%);
+  }
+  .tab {
+    @apply whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm font-medium text-parchment/60 transition hover:text-parchment;
+  }
+  .tab-active {
+    @apply border-gold text-gold;
+  }
 }
 
 /* Hide number input spinners for a cleaner sheet look */

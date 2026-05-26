@@ -86,7 +86,80 @@ export const FULL_CASTER_SLOTS: Record<number, number[]> = {
   20: [4, 3, 3, 3, 3, 2, 2, 1, 1],
 };
 
+// Half-caster spell slots (Paladin, Ranger, Artificer) by class level.
+export const HALF_CASTER_SLOTS: Record<number, number[]> = {
+  1: [0, 0, 0, 0, 0],
+  2: [2, 0, 0, 0, 0],
+  3: [3, 0, 0, 0, 0],
+  4: [3, 0, 0, 0, 0],
+  5: [4, 2, 0, 0, 0],
+  6: [4, 2, 0, 0, 0],
+  7: [4, 3, 0, 0, 0],
+  8: [4, 3, 0, 0, 0],
+  9: [4, 3, 2, 0, 0],
+  10: [4, 3, 2, 0, 0],
+  11: [4, 3, 3, 0, 0],
+  12: [4, 3, 3, 0, 0],
+  13: [4, 3, 3, 1, 0],
+  14: [4, 3, 3, 1, 0],
+  15: [4, 3, 3, 2, 0],
+  16: [4, 3, 3, 2, 0],
+  17: [4, 3, 3, 3, 1],
+  18: [4, 3, 3, 3, 1],
+  19: [4, 3, 3, 3, 2],
+  20: [4, 3, 3, 3, 2],
+};
+
+// Warlock Pact Magic: number of slots and the level those slots are cast at.
+export const PACT_MAGIC: Record<number, { slots: number; level: number }> = {
+  1: { slots: 1, level: 1 },
+  2: { slots: 2, level: 1 },
+  3: { slots: 2, level: 2 },
+  4: { slots: 2, level: 2 },
+  5: { slots: 2, level: 3 },
+  6: { slots: 2, level: 3 },
+  7: { slots: 2, level: 4 },
+  8: { slots: 2, level: 4 },
+  9: { slots: 2, level: 5 },
+  10: { slots: 2, level: 5 },
+  11: { slots: 3, level: 5 },
+  12: { slots: 3, level: 5 },
+  13: { slots: 3, level: 5 },
+  14: { slots: 3, level: 5 },
+  15: { slots: 3, level: 5 },
+  16: { slots: 3, level: 5 },
+  17: { slots: 4, level: 5 },
+  18: { slots: 4, level: 5 },
+  19: { slots: 4, level: 5 },
+  20: { slots: 4, level: 5 },
+};
+
 export type CasterType = "full" | "half" | "third" | "pact" | "none";
+
+// Proficiencies granted by each class at level 1 (SRD). Used to auto-fill the
+// "Proficiencies & Training" block when you apply class defaults.
+export interface ClassProficiencies {
+  armor: string;
+  weapons: string;
+  tools: string;
+  skillsNote: string;
+}
+
+export const CLASS_PROFICIENCIES: Record<string, ClassProficiencies> = {
+  Barbarian: { armor: "Light & medium armor, shields", weapons: "Simple & martial weapons", tools: "None", skillsNote: "Choose 2: Animal Handling, Athletics, Intimidation, Nature, Perception, Survival" },
+  Bard: { armor: "Light armor", weapons: "Simple weapons, hand crossbows, longswords, rapiers, shortswords", tools: "Three musical instruments", skillsNote: "Choose any 3 skills" },
+  Cleric: { armor: "Light & medium armor, shields", weapons: "Simple weapons", tools: "None", skillsNote: "Choose 2: History, Insight, Medicine, Persuasion, Religion" },
+  Druid: { armor: "Light & medium armor, shields (no metal)", weapons: "Clubs, daggers, darts, javelins, maces, quarterstaffs, scimitars, sickles, slings, spears", tools: "Herbalism kit", skillsNote: "Choose 2: Arcana, Animal Handling, Insight, Medicine, Nature, Perception, Religion, Survival" },
+  Fighter: { armor: "All armor, shields", weapons: "Simple & martial weapons", tools: "None", skillsNote: "Choose 2: Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, Survival" },
+  Monk: { armor: "None", weapons: "Simple weapons, shortswords", tools: "One artisan's tools or musical instrument", skillsNote: "Choose 2: Acrobatics, Athletics, History, Insight, Religion, Stealth" },
+  Paladin: { armor: "All armor, shields", weapons: "Simple & martial weapons", tools: "None", skillsNote: "Choose 2: Athletics, Insight, Intimidation, Medicine, Persuasion, Religion" },
+  Ranger: { armor: "Light & medium armor, shields", weapons: "Simple & martial weapons", tools: "None", skillsNote: "Choose 3: Animal Handling, Athletics, Insight, Investigation, Nature, Perception, Stealth, Survival" },
+  Rogue: { armor: "Light armor", weapons: "Simple weapons, hand crossbows, longswords, rapiers, shortswords", tools: "Thieves' tools", skillsNote: "Choose 4: Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, Stealth" },
+  Sorcerer: { armor: "None", weapons: "Daggers, darts, slings, quarterstaffs, light crossbows", tools: "None", skillsNote: "Choose 2: Arcana, Deception, Insight, Intimidation, Persuasion, Religion" },
+  Warlock: { armor: "Light armor", weapons: "Simple weapons", tools: "None", skillsNote: "Choose 2: Arcana, Deception, History, Intimidation, Investigation, Nature, Religion" },
+  Wizard: { armor: "None", weapons: "Daggers, darts, slings, quarterstaffs, light crossbows", tools: "None", skillsNote: "Choose 2: Arcana, History, Insight, Investigation, Medicine, Religion" },
+  Artificer: { armor: "Light & medium armor, shields", weapons: "Simple weapons", tools: "Thieves' tools, tinker's tools, one artisan's tools", skillsNote: "Choose 2: Arcana, History, Investigation, Medicine, Nature, Perception, Sleight of Hand" },
+};
 
 export interface ClassInfo {
   name: string;
