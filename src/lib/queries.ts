@@ -165,6 +165,22 @@ export async function createCharacter(
   return id;
 }
 
+export async function createCharacterWithData(
+  userId: string,
+  data: CharacterData,
+  campaignId: string | null
+): Promise<string> {
+  await ensureSchema();
+  const id = nanoid();
+  if (campaignId && !(await isMember(userId, campaignId))) campaignId = null;
+  const normalized = normalizeCharacter(data);
+  await sql`
+    INSERT INTO characters (id, owner_id, campaign_id, name, data)
+    VALUES (${id}, ${userId}, ${campaignId}, ${normalized.name || "New Adventurer"}, ${sql.json(normalized as any)})
+  `;
+  return id;
+}
+
 export async function saveCharacter(
   userId: string,
   characterId: string,

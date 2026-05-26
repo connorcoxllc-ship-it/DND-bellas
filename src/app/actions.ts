@@ -13,6 +13,7 @@ import {
   createCampaign,
   joinCampaign,
   createCharacter,
+  createCharacterWithData,
   saveCharacter,
   deleteCharacter,
   updateCampaignData,
@@ -73,6 +74,13 @@ export async function createCharacterAction(formData: FormData) {
   const campaignId = String(formData.get("campaignId") || "") || null;
   const id = await createCharacter(user.id, name, campaignId);
   redirect(`/character/${id}`);
+}
+
+export async function createBuiltCharacterAction(data: CharacterData, campaignId: string | null) {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false as const, error: "Not signed in." };
+  const id = await createCharacterWithData(user.id, data, campaignId);
+  return { ok: true as const, id };
 }
 
 export async function saveCharacterAction(

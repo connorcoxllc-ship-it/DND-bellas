@@ -533,6 +533,61 @@ export const COMMON_RACES = [
   "Other",
 ];
 
+// --- Character builder reference data ---
+
+export interface RaceInfo {
+  name: string;
+  abilityBonuses: Partial<Record<AbilityKey, number>>;
+  flexBonus?: { count: number; amount: number }; // e.g. Half-Elf: +1 to two others
+  speed: number;
+  size: string;
+  traits: string[];
+  languages: string[];
+}
+
+export const RACES: Record<string, RaceInfo> = {
+  Human: { name: "Human", abilityBonuses: { str: 1, dex: 1, con: 1, int: 1, wis: 1, cha: 1 }, speed: 30, size: "Medium", traits: [], languages: ["Common", "one extra"] },
+  "Elf (High)": { name: "Elf (High)", abilityBonuses: { dex: 2, int: 1 }, speed: 30, size: "Medium", traits: ["Darkvision", "Keen Senses (Perception)", "Fey Ancestry", "Trance", "Cantrip"], languages: ["Common", "Elvish"] },
+  "Dwarf (Hill)": { name: "Dwarf (Hill)", abilityBonuses: { con: 2, wis: 1 }, speed: 25, size: "Medium", traits: ["Darkvision", "Dwarven Resilience", "Dwarven Combat Training", "Stonecunning", "Dwarven Toughness"], languages: ["Common", "Dwarvish"] },
+  "Halfling (Lightfoot)": { name: "Halfling (Lightfoot)", abilityBonuses: { dex: 2, cha: 1 }, speed: 25, size: "Small", traits: ["Lucky", "Brave", "Halfling Nimbleness", "Naturally Stealthy"], languages: ["Common", "Halfling"] },
+  Dragonborn: { name: "Dragonborn", abilityBonuses: { str: 2, cha: 1 }, speed: 30, size: "Medium", traits: ["Draconic Ancestry", "Breath Weapon", "Damage Resistance"], languages: ["Common", "Draconic"] },
+  "Gnome (Rock)": { name: "Gnome (Rock)", abilityBonuses: { int: 2, con: 1 }, speed: 25, size: "Small", traits: ["Darkvision", "Gnome Cunning", "Artificer's Lore", "Tinker"], languages: ["Common", "Gnomish"] },
+  "Half-Elf": { name: "Half-Elf", abilityBonuses: { cha: 2 }, flexBonus: { count: 2, amount: 1 }, speed: 30, size: "Medium", traits: ["Darkvision", "Fey Ancestry", "Skill Versatility (2 skills)"], languages: ["Common", "Elvish", "one extra"] },
+  "Half-Orc": { name: "Half-Orc", abilityBonuses: { str: 2, con: 1 }, speed: 30, size: "Medium", traits: ["Darkvision", "Menacing (Intimidation)", "Relentless Endurance", "Savage Attacks"], languages: ["Common", "Orc"] },
+  Tiefling: { name: "Tiefling", abilityBonuses: { int: 1, cha: 2 }, speed: 30, size: "Medium", traits: ["Darkvision", "Hellish Resistance", "Infernal Legacy"], languages: ["Common", "Infernal"] },
+};
+
+export const RACE_NAMES = Object.keys(RACES);
+
+export interface BackgroundInfo {
+  name: string;
+  skills: string[]; // skill keys
+  tools: string;
+  languages: number;
+  feature: string;
+  equipment: string[];
+  suggested: { personality: string; ideal: string; bond: string; flaw: string };
+}
+
+export const BACKGROUNDS: Record<string, BackgroundInfo> = {
+  Acolyte: { name: "Acolyte", skills: ["insight", "religion"], tools: "", languages: 2, feature: "Shelter of the Faithful", equipment: ["Holy symbol", "Prayer book", "5 sticks of incense", "Vestments", "Common clothes", "15 gp"], suggested: { personality: "I idolize a particular hero of my faith.", ideal: "Faith. I trust my deity guides my actions.", bond: "I owe my life to the priest who took me in.", flaw: "I judge others harshly, and myself even more so." } },
+  Criminal: { name: "Criminal", skills: ["deception", "stealth"], tools: "Thieves' tools, one gaming set", languages: 0, feature: "Criminal Contact", equipment: ["Crowbar", "Dark common clothes with hood", "15 gp"], suggested: { personality: "I always have a plan for when things go wrong.", ideal: "Freedom. Chains are meant to be broken.", bond: "I will become the greatest thief that ever lived.", flaw: "When faced with a choice between money and friends, I usually choose money." } },
+  "Folk Hero": { name: "Folk Hero", skills: ["animalHandling", "survival"], tools: "One artisan's tools, vehicles (land)", languages: 0, feature: "Rustic Hospitality", equipment: ["Artisan's tools", "Shovel", "Iron pot", "Common clothes", "10 gp"], suggested: { personality: "I judge people by their actions, not their words.", ideal: "Sincerity. There's no good pretending to be something I'm not.", bond: "I protect those who cannot protect themselves.", flaw: "The tyrant who rules my land will stop at nothing to see me killed." } },
+  Noble: { name: "Noble", skills: ["history", "persuasion"], tools: "One gaming set", languages: 1, feature: "Position of Privilege", equipment: ["Fine clothes", "Signet ring", "Scroll of pedigree", "25 gp"], suggested: { personality: "My eloquent flattery makes everyone I talk to feel important.", ideal: "Responsibility. It is my duty to respect the authority above me.", bond: "I will face any challenge to win the approval of my family.", flaw: "I secretly believe that everyone is beneath me." } },
+  Sage: { name: "Sage", skills: ["arcana", "history"], tools: "", languages: 2, feature: "Researcher", equipment: ["Bottle of ink", "Quill", "Small knife", "Letter from a dead colleague", "Common clothes", "10 gp"], suggested: { personality: "I use polysyllabic words to convey the impression of erudition.", ideal: "Knowledge. The path to power and self-improvement is through knowledge.", bond: "I've been searching my whole life for the answer to a certain question.", flaw: "I am easily distracted by the promise of information." } },
+  Soldier: { name: "Soldier", skills: ["athletics", "intimidation"], tools: "One gaming set, vehicles (land)", languages: 0, feature: "Military Rank", equipment: ["Insignia of rank", "Trophy from a fallen enemy", "Deck of cards", "Common clothes", "10 gp"], suggested: { personality: "I can stare down a hell hound without flinching.", ideal: "Greater Good. Our lot is to lay down our lives in defense of others.", bond: "I'd still lay down my life for the people I served with.", flaw: "I'd rather eat my armor than admit when I'm wrong." } },
+  Hermit: { name: "Hermit", skills: ["medicine", "religion"], tools: "Herbalism kit", languages: 1, feature: "Discovery", equipment: ["Scroll case of notes", "Winter blanket", "Common clothes", "Herbalism kit", "5 gp"], suggested: { personality: "I've been isolated so long that I rarely speak.", ideal: "Self-Knowledge. If you know yourself, there's nothing left to know.", bond: "I entered seclusion to hide from those who might still be hunting me.", flaw: "I harbor dark, bloodthirsty thoughts that my isolation failed to quell." } },
+  Entertainer: { name: "Entertainer", skills: ["acrobatics", "performance"], tools: "Disguise kit, one musical instrument", languages: 0, feature: "By Popular Demand", equipment: ["Musical instrument", "Favor of an admirer", "Costume", "15 gp"], suggested: { personality: "I know a story relevant to almost every situation.", ideal: "Beauty. When I perform, I make the world better than it was.", bond: "My instrument is my most treasured possession.", flaw: "I'll do anything to win fame and renown." } },
+};
+
+export const BACKGROUND_NAMES = Object.keys(BACKGROUNDS);
+
+export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
+
+// Point-buy cost per score (5e: 27 points, scores 8–15).
+export const POINT_BUY_COST: Record<number, number> = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9 };
+export const POINT_BUY_BUDGET = 27;
+
 export const ALIGNMENTS = [
   "Lawful Good",
   "Neutral Good",
