@@ -10,6 +10,7 @@ import type {
   FeatureEntry,
   ItemEntry,
 } from "@/lib/dnd/character";
+import { CARD_STAT_OPTIONS } from "@/lib/dnd/character";
 import {
   ABILITIES,
   AbilityKey,
@@ -131,7 +132,10 @@ export default function CharacterSheet({
       {/* Header bar */}
       <section className="panel flex flex-wrap items-center gap-4 p-4">
         <div className="flex items-center gap-3">
-          {canEdit ? (
+          {data.avatarImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={data.avatarImageUrl} alt="" className="h-14 w-14 rounded-full border-2 object-cover" style={{ borderColor: data.avatarColor }} />
+          ) : canEdit ? (
             <input
               type="color"
               value={data.avatarColor}
@@ -776,6 +780,33 @@ function Background({ ro, data, update }: SectionProps) {
         <TA ro={ro} label="Flaws" value={data.flaws} onChange={(v) => update({ flaws: v })} />
       </div>
       <TA ro={ro} label="Backstory" value={data.backstory} onChange={(v) => update({ backstory: v })} rows={6} />
+
+      <div className="rounded border border-gold/20 bg-black/20 p-3">
+        <h3 className="panel-title mb-2">Card &amp; Portrait</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Labeled label="Portrait image URL">
+            <input className="inp" disabled={ro} value={data.avatarImageUrl} placeholder="https://… (leave blank for color)" onChange={(e) => update({ avatarImageUrl: e.target.value })} />
+          </Labeled>
+          <div>
+            <div className="label mb-1">Stats shown on your card</div>
+            <div className="flex flex-wrap gap-2">
+              {CARD_STAT_OPTIONS.map((o) => {
+                const on = data.cardStats.includes(o.key);
+                return (
+                  <button
+                    key={o.key}
+                    disabled={ro}
+                    className={`chip ${on ? "bg-gold/25 text-gold" : ""}`}
+                    onClick={() => update({ cardStats: on ? data.cardStats.filter((k) => k !== o.key) : [...data.cardStats, o.key] })}
+                  >
+                    {o.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

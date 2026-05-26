@@ -2,6 +2,12 @@ import "server-only";
 import { nanoid } from "nanoid";
 import { sql, ensureSchema } from "./db";
 import { CharacterData, defaultCharacter, normalizeCharacter } from "./dnd/character";
+import {
+  CampaignData,
+  UserPrefs,
+  normalizeCampaignData,
+  normalizePrefs,
+} from "./dnd/dashboard";
 
 export interface CampaignRow {
   id: string;
@@ -187,4 +193,75 @@ export async function deleteCharacter(userId: string, characterId: string): Prom
   await ensureSchema();
   const res = await sql`DELETE FROM characters WHERE id = ${characterId} AND owner_id = ${userId}`;
   return res.count > 0;
+}
+
+/* ---------------- campaign homepage ---------------- */
+
+export interface FullCampaign {
+  id: string;
+  name: string;
+  join_code: string;
+  owner_id: string;
+  isDm: boolean;
+  data: CampaignData;
+  members: CampaignMemberInfo[];
+  characters: CharacterRow[];
+}
+
+export async function getCampaignFull(
+  userId: string,
+  campaignId: string
+): Promise<FullCampaign | null> {
+  await ensureSchema();
+  if (!(await isMember(userId, campaignId))) return null;
+  const rows = await sql<
+    { id: string; name: string; join_code: string; owner_id: string; data: CampaignData }[]
+  >`SELECT id, name, join_code, owner_id, data FROM campaigns WHERE id = ${campaignId} LIMIT 1`;
+  if (rows.length === 0) return null;
+  const c = rows[0];
+  const members = await listCampaignMembers(campaignId);
+  const chars = await sql<CharacterRow[]>`
+    SELECT ch.id, ch.owner_id, ch.campaign_id, ch.name, ch.data, ch.updated_at, u.display_name AS owner_name
+    FROM characters ch JOIN users u ON u.id = ch.owner_id
+    WHERE ch.campaign_id = ${campaignId}
+    ORDER BY ch.name ASC
+  `;
+  return {
+    id: c.id,
+    name: c.name,
+    join_code: c.join_code,
+    owner_id: c.owner_id,
+    isDm: c.owner_id === userId,
+    data: normalizeCampaignData(c.data),
+    members,
+    characters: chars.map((r) => ({ ...r, data: normalizeCharacter(r.data) })),
+  };
+}
+
+export async function updateCampaignData(
+  userId: string,
+  campaignId: string,
+  data: CampaignData
+): Promise<{ ok: boolean; error?: string }> {
+  await ensureSchema();
+  const rows = await sql`SELECT owner_id FROM campaigns WHERE id = ${campaignId} LIMIT 1`;
+  if (rows.length === 0) return { ok: false, error: "Campaign not found." };
+  if ((rows[0] as any).owner_id !== userId) {
+    return { ok: false, error: "Only the DM can edit the campaign page." };
+  }
+  await sql`UPDATE campaigns SET data = ${sql.json(data as any)} WHERE id = ${campaignId}`;
+  return { ok: true };
+}
+
+/* ---------------- user dashboard prefs ---------------- */
+
+export async function getUserPrefs(userId: string): Promise<UserPrefs> {
+  await ensureSchema();
+  const rows = await sql<{ prefs: UserPrefs }[]>`SELECT prefs FROM users WHERE id = ${userId} LIMIT 1`;
+  return normalizePrefs(rows[0]?.prefs);
+}
+
+export async function saveUserPrefs(userId: string, prefs: UserPrefs): Promise<void> {
+  await ensureSchema();
+  await sql`UPDATE users SET prefs = ${sql.json(prefs as any)} WHERE id = ${userId}`;
 }
